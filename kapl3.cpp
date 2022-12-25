@@ -1,4 +1,4 @@
-﻿#include <Windows.h>
+#include <Windows.h>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -46,7 +46,7 @@ void Print(Tree t, int level = 0)
 }
 
 using Tree = NODE*;
-Tree Build_Balance(std::ifstream& file, int count/*, int level = 0*/)
+Tree Build_Balance(std::ifstream& file, int count)
 {
 	Tree result = nullptr;
 	if (count)
@@ -56,8 +56,8 @@ Tree Build_Balance(std::ifstream& file, int count/*, int level = 0*/)
 		int x;
 		file >> x;
 		result = new NODE(x);
-		result->left = Build_Balance(file, count_left/*,level+1*/);
-		result->right = Build_Balance(file, count_right/*, level + 1*/);
+		result->left = Build_Balance(file, count_left);
+		result->right = Build_Balance(file, count_right);
 	}
 	return result;
 }
@@ -70,7 +70,6 @@ bool is_leaf(Tree p)
 		return true;
 	return false;
 }
-
 
 Tree find_max(Tree root, Tree& max_leaf, Tree& max_leaf_root)
 {
@@ -115,43 +114,10 @@ Tree find_max(Tree root, Tree& max_leaf, Tree& max_leaf_root)
 	return max_leaf_root;
 }
 
-Tree task(Tree& root, Tree& maxleaf) {
-	bool stop = true;
-	TInfo prev = root->info;
-	std::stack<Tree> tree;
-	Tree a;
-	tree.push(root);
-	while (!tree.empty() && stop) {
-		a = tree.top();
-		while (a->left) {
-			tree.push(a->right);
-			tree.push(a->left);
-			a = tree.top();
-		}
-		prev = a->info;
-		tree.pop();
-		if (!tree.empty()) {
-			a = tree.top();
-			if (a) {
-				Tree q = tree.top();
-				tree.pop();
-				if (a->info > prev) {
-					prev = a->info;
-					tree.pop();
-					tree.push(q);
-				}
-				else { stop = false; }
-			}
-			else { tree.pop(); }
-		}
-	}
-}
-
 
 
 int main()
 {
-
 	setlocale(0, "");
 
 	std::ifstream file("numbers.txt");
@@ -165,8 +131,8 @@ int main()
 
 	std::cout << std::endl << std::endl;
 
-	bool tmp_max = false, tmp_min = false;
-	Tree max_leaf = nullptr, min_leaf = nullptr, max_leaf_root = nullptr, min_leaf_root = nullptr;
+	Tree max_leaf = nullptr, max_leaf_root = nullptr;
+	find_max(root, max_leaf, max_leaf_root);
 
 	if (find_max(root, max_leaf, max_leaf_root)->right->info == max_leaf->info)
 		max_leaf_root->right = nullptr;
@@ -175,3 +141,4 @@ int main()
 
 	Print(root);
 }
+
